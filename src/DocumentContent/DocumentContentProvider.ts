@@ -6,9 +6,8 @@ import Node from '../DynalistAPI/Node';
 export default class DocumentContentProvider implements vscode.TreeDataProvider<ContentItem> {
 	private _onDidChangeTreeData = new vscode.EventEmitter<ContentItem | undefined | void>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
-	onDidChangeCheckboxState: vscode.Event<vscode.TreeCheckboxChangeEvent<ContentItem | undefined | void>>=(e)=>{
-		e()
-		return;
+	readonly onDidChangeCheckboxState: vscode.Event<vscode.TreeCheckboxChangeEvent<ContentItem | undefined | void>> = (e) => {
+		this.handleCheckboxStateChange(e);
 	};
 	private api: DynalistAPI | null = null;
 	private content: Node[] = [];
@@ -82,5 +81,23 @@ export default class DocumentContentProvider implements vscode.TreeDataProvider<
 			}
 			return Promise.resolve([]);
 		}
+	}
+	private handleCheckboxStateChange(e: vscode.TreeCheckboxChangeEvent<void | ContentItem | undefined>): void {
+		if (e.items[0]?.[0]) {
+			const item = e.items[0][0];
+			this.updateData(item);
+		}
+	}
+	
+	private updateData(item: ContentItem): void {
+		// Implement the logic to update the data
+		console.log('Updating data for item:', item);
+		// Example: Update the content array
+		const index = this.content.findIndex(node => node.id === item.id);
+		if (index !== -1) {
+			this.content[index] = item;
+		}
+		// Trigger the tree data change event
+		this._onDidChangeTreeData.fire(item);
 	}
 }
