@@ -1,10 +1,52 @@
 import * as vscode from 'vscode';
 import ContentItem from './ContentItem';
+import DynalistAPI from '../DynalistAPI/DynalistAPI';
+import getToken from '../Token/getToken';
+import Node from '../DynalistAPI/Node';
 export default class DocumentContentProvider implements vscode.TreeDataProvider<ContentItem> {
-	private _onDidChangeTreeData: vscode.EventEmitter<ContentItem | undefined | void> = new vscode.EventEmitter<ContentItem | undefined | void>();
-	readonly onDidChangeTreeData: vscode.Event<ContentItem | undefined | void> = this._onDidChangeTreeData.event;
-
-	constructor(private content: any) { }
+	private _onDidChangeTreeData = new vscode.EventEmitter<ContentItem | undefined | void>();
+	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+	onDidChangeCheckboxState: vscode.Event<vscode.TreeCheckboxChangeEvent<ContentItem | undefined | void>>=(e)=>{
+		e()
+		return;
+	};
+	private api: DynalistAPI | null = null;
+	private content: Node[] = [];
+	constructor(private context: vscode.ExtensionContext) {
+		console.log('DocumentContentProvider created');
+		(async () => {
+			const token = await getToken(context.secrets);
+			if (!token) {
+				vscode.window.showErrorMessage('API Token not set. Please save your token first.');
+				return;
+			}
+			console.log('DocumentContentProvider token:', token);
+		})();
+	}
+	async createApi(): Promise<DynalistAPI> {
+		if (this.api) {
+			return this.api;
+		}
+		const token = await getToken(this.context.secrets);
+		if (!token) {
+			vscode.window.showErrorMessage('API Token not set. Please save your token first.');
+			return vscode.commands.executeCommand('dynalist-plugin.save-token').then(() => {
+				return this.createApi();
+			});
+		}
+		this.api = new DynalistAPI(token);
+		return this.api;
+	}
+	async load(documentId: string) {
+		const api = await this.createApi();
+		api.fetchDocumentContent(documentId).then(
+			(content) => {
+				console.log('DocumentContentProvider content:', content);
+				this.content = content.nodes;
+				this._onDidChangeTreeData.fire();
+			}
+		);
+	}
 
 	getTreeItem(element: ContentItem): vscode.TreeItem {
 		return element;
@@ -17,18 +59,24 @@ export default class DocumentContentProvider implements vscode.TreeDataProvider<
 				return Promise.resolve(
 					node.children.map((childId: string) => {
 						const childNode = this.content.find((n: any) => n.id === childId);
-						return new ContentItem(childNode.content, childNode.id, childNode.note, childNode.collapsed);
+						if(!childNode) {
+							return new ContentItem('Error', 'error', 'Error', false, false);
+						}
+						return new ContentItem(childNode.content, childNode.id, childNode.note, childNode.collapsed, childNode.checked);
 					})
 				);
 			}
 			return Promise.resolve([]);
 		} else {
-			const rootNode = this.content[0];
+			const rootNode = this.content.find(node=>node.id==='root');
 			if (rootNode && rootNode.children) {
 				return Promise.resolve(
 					rootNode.children.map((childId: string) => {
-						const childNode = this.content.find((n: any) => n.id === childId);
-						return new ContentItem(childNode.content, childNode.id, childNode.note, childNode.collapsed);
+						const childNode = this.content.find(n => n.id === childId);
+						if(!childNode) {
+							return new ContentItem('Error', 'error', 'Error', false, false);
+						}
+						return new ContentItem(childNode.content, childNode.id, childNode.note, childNode.collapsed, childNode.checked);
 					})
 				);
 			}

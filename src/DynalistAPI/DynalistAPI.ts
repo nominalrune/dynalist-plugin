@@ -13,8 +13,8 @@ export default class DynalistAPI {
 				token: this.token,
 			})
 		}).then((response) => response.json() as Promise<ListResponse>);
-		if (response._code !== 'OK') {
-			throw new Error('Failed to fetch documents');
+		if (response._code !== 'Ok') {
+			throw new Error('Failed to fetch documents:' + response._msg);
 		}
 
 		const files = response.files;
@@ -44,22 +44,22 @@ export default class DynalistAPI {
 				file_id: fileId,
 			})
 		}).then((response) => response.json() as Promise<DocResponse>);
-		if (response._code !== 'OK') {
-			throw new Error('Failed to fetch document content');
+		if (response._code !== 'Ok') {
+			throw new Error('Failed to fetch document content'+ response._msg);
 		}
 		return response;
 	}
 }
 type CommonError = "InvalidToken" | "TooManyRequests" | "Invalid" | "LockFail";
 interface ListResponse {
-	"_code": "OK" | CommonError,
+	"_code": "Ok" | CommonError,
 	"_msg": string,
 	"root_file_id": string,
 	"files": File[],
 }
 
 interface DocResponse {
-	"_code": "OK" | CommonError | "Unauthorized" | "NotFound",
+	"_code": "Ok" | CommonError | "Unauthorized" | "NotFound",
 	"_msg": string,
 	"file_id": string,
 	"title": string,

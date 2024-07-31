@@ -9,21 +9,99 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "dynalist-plugin.save-token",
-        "title": "Input token"
+        "title": "Input token",
+        "icon": {
+          "light": "resources/key.svg",
+          "dark": "resources/key.svg"
+        },
+        "category": "Dynalist"
       },
       {
         "command": "dynalist-plugin.show-document-list",
-        "title": "List documents"
+        "title": "List documents",
+        "icon": {
+          "light": "resources/refresh-cw.svg",
+          "dark": "resources/refresh-cw.svg"
+        },
+        "category": "Dynalist"
       },
       {
         "command": "dynalist-plugin.show-content",
         "title": "Show document content"
+      },
+      {
+        "command": "dynalist-plugin.node.insert",
+        "title": "Insert Node"
+      },
+      {
+        "command": "dynalist-plugin.node.indent",
+        "title": "Indent Node",
+        "icon": {
+          "light": "resources/plus.svg",
+          "dark": "resources/plus.svg"
+        }
+      },
+      {
+        "command": "dynalist-plugin.node.outdent",
+        "title": "Outdent Node"
+      },
+      {
+        "command": "dynalist-plugin.node.delete",
+        "title": "Delete Node",
+        "icon": {
+          "light": "resources/x.svg",
+          "dark": "resources/x.svg"
+        }
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "dynalist-plugin.save-token"
+        },
+        {
+          "command": "dynalist-plugin.show-document-list"
+        },
+        {
+          "command": "dynalist-plugin.show-content"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "dynalist-plugin.show-document-list",
+          "when": "view == dynalist-document-list",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "dynalist-plugin.node.insert",
+          "when": "view == dynalist-document-content"
+        },
+        {
+          "command": "dynalist-plugin.node.indent",
+          "when": "view == dynalist-document-content"
+        },
+        {
+          "command": "dynalist-plugin.node.outdent",
+          "when": "view == dynalist-document-content"
+        },
+        {
+          "command": "dynalist-plugin.node.delete",
+          "when": "view == dynalist-document-content",
+          "group": "inline"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "dynalistPlugin",
+        "contents": "Input your token\n[input](command:dynalist-plugin.save-token)"
       }
     ],
     "viewsContainers": {
@@ -31,19 +109,21 @@
         {
           "id": "dynalistPlugin",
           "title": "Dynalist",
-          "icon": "resources/icon.png"
+          "icon": "resources/icon.svg"
         }
       ]
     },
-    "views":{
+    "views": {
       "dynalistPlugin": [
         {
           "id": "dynalist-document-list",
-          "name": "Dynalist - Documents"
+          "name": "Dynalist - Documents",
+          "icon": "resources/icon.svg"
         },
         {
           "id": "dynalist-document-content",
-          "name": "Dynalist - Content"
+          "name": "Dynalist - Content",
+          "icon": "resources/icon.svg"
         }
       ]
     }
