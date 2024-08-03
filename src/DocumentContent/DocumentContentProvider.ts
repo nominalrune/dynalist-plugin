@@ -20,7 +20,7 @@ export default class DocumentContentProvider implements vscode.TreeDataProvider<
 			if (this.changes.length > 0) {
 				this.saveChanges();
 			}
-		}, 10000);
+		}, 15000);
 	}
 	dispose() {
 		this.saveChanges();
@@ -200,7 +200,6 @@ export default class DocumentContentProvider implements vscode.TreeDataProvider<
 		const api = await this.getApi();
 		api.saveDocumentContetnt(this.fileId, this.changes).then(() => {
 			this._onDidChangeTreeData.fire();
-		}).finally(() => {
 			this.changes = [];
 		});
 	}
