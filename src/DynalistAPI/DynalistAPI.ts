@@ -1,5 +1,6 @@
 import Node from './Node';
 import File from './File';
+import { Change } from './Change';
 
 export default class DynalistAPI {
 	token: string = '';
@@ -45,9 +46,23 @@ export default class DynalistAPI {
 			})
 		}).then((response) => response.json() as Promise<DocResponse>);
 		if (response._code !== 'Ok') {
-			throw new Error('Failed to fetch document content'+ response._msg);
+			throw new Error('Failed to fetch document content' + response._msg);
 		}
 		return response;
+	}
+	async saveDocumentContetnt(fileId: string, changes: Change[]) {
+		const response = await fetch('https://dynalist.io/api/v1/doc/edit', {
+			method: 'POST',
+			body: JSON.stringify({
+				token: this.token,
+				file_id: fileId,
+				changes: changes,
+			})
+		}).then((response) => response.json() as Promise<EditResponse>);
+		console.log('saveDocumentContetnt response:', response);
+		if (response._code !== 'Ok') {
+			throw new Error('Failed to update document content:' + response._msg);
+		}
 	}
 }
 type CommonError = "InvalidToken" | "TooManyRequests" | "Invalid" | "LockFail";
@@ -67,6 +82,6 @@ interface DocResponse {
 }
 
 interface EditResponse {
-	"_code": "OK" | CommonError | "Unauthorized" | "NotFound" | "NodeNotFound",
+	"_code": "Ok" | CommonError | "Unauthorized" | "NotFound" | "NodeNotFound",
 	"_msg": string,
 }
