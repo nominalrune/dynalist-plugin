@@ -1,15 +1,57 @@
 import { window, commands, type ExtensionContext } from 'vscode';
 import DocumentContentProvider from './DocumentContentProvider';
-const showContentCommand = (context: ExtensionContext) => {1
+import ContentItem from './ContentItem';
+const showContentCommand = (context: ExtensionContext) => {
 	try {
 		const provider = new DocumentContentProvider(context);
-		const dp = window.registerTreeDataProvider('dynalist-document-content', provider);
-		const c = commands.registerCommand('dynalist-plugin.show-content', (documentId: string) => {
+		const treeView = window.createTreeView('dynalist-document-content', { treeDataProvider: provider });
+		treeView.onDidChangeCheckboxState((e) => {
+			const item = e.items[0][0];
+			provider.toogleCheck(item);
+		});
+		const showContentCommand = commands.registerCommand('dynalist-plugin.show-content', (documentId?: string) => {
 			provider.load(documentId);
 		});
-		context.subscriptions.push(dp, c);
+		const insertCommand = commands.registerCommand('dynalist-plugin.node.insert', async (node?: ContentItem) => {
+			const content = await window.showInputBox({
+				prompt: 'Enter the content for the new node',
+				ignoreFocusOut: true,
+			});
+			if (content) {
+				provider.insertNode(node, content);
+			}
+		});
+		const editCommand = commands.registerCommand('dynalist-plugin.node.edit', async (node: ContentItem) => {
+			const content = await window.showInputBox({
+				prompt: 'Edit the content',
+				value: node.label?.toString(),
+				ignoreFocusOut: true,
+			});
+			if (content) {
+				provider.editNode(node, content);
+			}
+		});
+		const deleteCommand = commands.registerCommand('dynalist-plugin.node.delete', (node: ContentItem) => {
+			provider.deleteNode(node);
+		});
+		const indentCommand = commands.registerCommand('dynalist-plugin.node.indent', (node: ContentItem) => {
+			provider.indentNode(node);
+		});
+		const outdentCommand = commands.registerCommand('dynalist-plugin.node.outdent', (node: ContentItem) => {
+			provider.outdentNode(node);
+		});
+
+		context.subscriptions.push(
+			treeView,
+			showContentCommand,
+			insertCommand,
+			editCommand,
+			deleteCommand,
+			indentCommand,
+			outdentCommand,
+		);
 	} catch (error) {
-		window.showErrorMessage('Failed to register the `dynalist-plugin.show-content` command.');
+		window.showErrorMessage('Failed to register the commands.');
 	}
 };
 export default showContentCommand;

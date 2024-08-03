@@ -1,7 +1,7 @@
 {
   "name": "dynalist-plugin",
-  "displayName": "dynalist-plugin",
-  "description": "dynalist vscode extention",
+  "displayName": "Dynalist plugin",
+  "description": "[unofficial] Dynalist vscode extention",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.91.0"
@@ -22,47 +22,56 @@
         "category": "Dynalist"
       },
       {
-        "command": "dynalist-plugin.show-document-list",
-        "title": "List documents",
+        "command": "dynalist-plugin.update-token",
+        "title": "Update token",
         "icon": {
-          "light": "resources/refresh-cw.svg",
-          "dark": "resources/refresh-cw.svg"
+          "light": "resources/key.svg",
+          "dark": "resources/key.svg"
         },
         "category": "Dynalist"
       },
       {
+        "command": "dynalist-plugin.show-document-list",
+        "title": "List documents",
+        "icon": "resources/refresh-cw.svg",
+        "category": "Dynalist"
+      },
+      {
         "command": "dynalist-plugin.show-content",
-        "title": "Show document content"
+        "title": "Show document content",
+        "icon": "resources/refresh-cw.svg"
       },
       {
         "command": "dynalist-plugin.node.insert",
-        "title": "Insert Node"
+        "title": "Insert Node",
+        "icon": "resources/plus.svg"
       },
       {
         "command": "dynalist-plugin.node.indent",
-        "title": "Indent Node",
-        "icon": {
-          "light": "resources/plus.svg",
-          "dark": "resources/plus.svg"
-        }
+        "title": "Indent Node"
       },
       {
         "command": "dynalist-plugin.node.outdent",
         "title": "Outdent Node"
       },
       {
+        "command": "dynalist-plugin.node.edit",
+        "title": "Edit Node",
+        "icon": "resources/edit.svg"
+      },
+      {
         "command": "dynalist-plugin.node.delete",
         "title": "Delete Node",
-        "icon": {
-          "light": "resources/x.svg",
-          "dark": "resources/x.svg"
-        }
+        "icon": "resources/x.svg"
       }
     ],
     "menus": {
       "commandPalette": [
         {
           "command": "dynalist-plugin.save-token"
+        },
+        {
+          "command": "dynalist-plugin.update-token"
         },
         {
           "command": "dynalist-plugin.show-document-list"
@@ -76,25 +85,43 @@
           "command": "dynalist-plugin.show-document-list",
           "when": "view == dynalist-document-list",
           "group": "navigation"
+        },
+        {
+          "command": "dynalist-plugin.node.insert",
+          "when": "view == dynalist-document-content",
+          "group": "navigation"
+        },
+        {
+          "command": "dynalist-plugin.show-content",
+          "when": "view == dynalist-document-content",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "dynalist-plugin.node.insert",
-          "when": "view == dynalist-document-content"
+          "when": "view == dynalist-document-content",
+          "group": "01_file"
         },
         {
           "command": "dynalist-plugin.node.indent",
-          "when": "view == dynalist-document-content"
+          "when": "view == dynalist-document-content",
+          "group": "02_node"
         },
         {
           "command": "dynalist-plugin.node.outdent",
-          "when": "view == dynalist-document-content"
+          "when": "view == dynalist-document-content",
+          "group": "02_node"
+        },
+        {
+          "command": "dynalist-plugin.node.edit",
+          "when": "view == dynalist-document-content",
+          "group": "inline@0"
         },
         {
           "command": "dynalist-plugin.node.delete",
           "when": "view == dynalist-document-content",
-          "group": "inline"
+          "group": "inline@1"
         }
       ]
     },

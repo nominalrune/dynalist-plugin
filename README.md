@@ -1,71 +1,40 @@
-# dynalist-plugin README
+# Dynalist Simple Plugin
 
-This is the README for your extension "dynalist-plugin". After writing up a brief description, we recommend including the following sections.
+The Dynalist Simple Plugin allows you to integrate your Dynalist documents into Visual Studio Code. This plugin provides a convenient way to view, and edit your Dynalist documents without leaving your coding environment.
 
 ## Features
+- **View Document List:** Display a tree view of your Dynalist documents and folders in the sidebar.
+- **View Document Content:** Click on a document to fetch and display its content.
+- **Context Menu Commands:** Right-click on document content items to:
+  - Insert new nodes
+  - Indent or outdent nodes
+  - Delete nodes
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## Getting Started
 
-For example if there is an image subfolder under your extension project workspace:
+1. **Input Your API Token:**
+   - Get your API token via [dynalist's developper page](https://dynalist.io/developer).
+   - When the plugin is activated, it will prompt you to enter your Dynalist API token if not already saved.
+   - You can also manually run the command `Dynalist: Save API Token` via the Command Palette (`Ctrl+Shift+P`).
 
-\!\[feature X\]\(images/feature-x.png\)
+2. **View Document List:**
+   - Run the command `Dynalist: Show Document List` via the Command Palette (`Ctrl+Shift+P`).
+   - Your Dynalist documents and folders will appear in the sidebar under the "Dynalist" section.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+3. **View/Edit Document Content:**
+   - Click on any document in the sidebar to load its content in the "Document Content" panel.
 
-## Requirements
+## Commands
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- `Dynalist: Save API Token` - Prompts to enter and save your Dynalist API token securely.
+- `Dynalist: Show Document List` - Displays the list of documents and folders from your Dynalist account.
+- `Dynalist: Show Document Content` - Fetches and displays the content of the selected document.
 
-## Extension Settings
+## License
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+This project is licensed under the MIT License.
 
-For example:
+## Acknowledgements
 
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- [Dynalist API Documentation](https://apidocs.dynalist.io/) for providing the API reference.
+- [Visual Studio Code Extension API](https://code.visualstudio.com/api) for the development guidelines.
