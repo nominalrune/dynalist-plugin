@@ -2,8 +2,12 @@
   "name": "dynalist-plugin",
   "displayName": "Dynalist plugin",
   "description": "[unofficial] Dynalist vscode extention",
-  "version": "0.1.0",
-  "publisher": "nominalrune",
+  "version": "0.1.1",
+  "publisher": "KeiYokoyama",
+  "icon": "resources/icon.png",
+  "repository": {
+    "url": "https://github.com/nominalrune/dynalist-plugin"
+  },
   "engines": {
     "vscode": "^1.91.0"
   },
