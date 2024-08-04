@@ -8,42 +8,45 @@ export default class DocumentContentProvider implements vscode.TreeDataProvider<
 	private _onDidChangeTreeData = new vscode.EventEmitter<ContentItem | undefined | void>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 	private changes: Change[] = [];
-	public fileId: string = '';
-	private api: DynalistAPI | null = null;
+	public documentId: string = '';
+	private api: DynalistAPI;
 	public content: Node[];
 	private interval_id;
 	constructor(private context: vscode.ExtensionContext) {
-		console.log('DocumentContentProvider created');
-		this.getApi();
+		this.api = new DynalistAPI(this.context);
 		this.content = [];
 		this.interval_id = setInterval(() => {
 			if (this.changes.length > 0) {
 				this.saveChanges();
 			}
 		}, 15000);
+		console.log('DocumentContentProvider created', {
+			api: this.api,
+			content: this.content,
+			interval_id: this.interval_id,
+		});
 	}
 	dispose() {
 		this.saveChanges();
 		clearInterval(this.interval_id);
 	}
-	private getApi(): DynalistAPI {
-		if (this.api) { return this.api; }
-		this.api = new DynalistAPI(this.context);
-		return this.api;
-	}
 	async load(documentId?: string) {
-		if (documentId) {
-			this.fileId = documentId;
+		console.log('load', documentId);
+		// save changes before loading other document
+		if (this.content.length > 0 && this.changes.length > 0) {
+			await this.saveChanges();
 		}
-		if (!this.fileId) { return; }
-		const api = await this.getApi();
-		api.fetchDocumentContent(this.fileId)
+
+		documentId ??= this.documentId;
+		if (!documentId) { return; }
+		this.api.fetchDocumentContent(documentId)
 			.then((documentContent) => {
 				console.log('document fetched.', documentContent);
 				this.content = documentContent.nodes;
 				this._onDidChangeTreeData.fire();
 			})
 			.catch(e => {
+				console.log('error', e);
 				if (!(e instanceof Error)) { return; }
 				vscode.window.showErrorMessage(e.message);
 			});
@@ -124,13 +127,14 @@ export default class DocumentContentProvider implements vscode.TreeDataProvider<
 		this._onDidChangeTreeData.fire();
 	}
 	public toogleCheck(node: ContentItem) {
-		const n = this.content.find(n => n.id === node.id);
-		if (!n) { return; }
+		const checked = node.checkboxState === vscode.TreeItemCheckboxState.Checked ? true : false;
+		this.content = this.content.map(n => n.id === node.id ? ({ ...n, checked }) : n);
 		this.updateData({
 			action: 'edit',
-			node_id: n.id,
-			checked: node.checkboxState === vscode.TreeItemCheckboxState.Checked ? true : false,
+			node_id: node.id,
+			checked,
 		});
+		console.log('toggleCheck', node, this.content);
 	}
 	public indentNode(node: ContentItem) {
 		const parent = this.content.find(n => n.children?.includes(node.id));
@@ -196,10 +200,11 @@ export default class DocumentContentProvider implements vscode.TreeDataProvider<
 		return this.changes;
 	}
 	public async saveChanges() {
-		const api = await this.getApi();
-		api.saveDocumentContetnt(this.fileId, this.changes).then(() => {
+		console.log('saveChanges started', this.changes);
+		this.api.saveDocumentContetnt(this.documentId, this.changes).then(() => {
 			this._onDidChangeTreeData.fire();
 			this.changes = [];
+			console.log('saveChanges finished', this.changes, this.content);
 		});
 	}
 }

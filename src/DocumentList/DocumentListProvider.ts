@@ -7,14 +7,11 @@ export default class DynalistDocumentProvider implements vscode.TreeDataProvider
 	private _onDidChangeTreeData: vscode.EventEmitter<DocumentItem | undefined | void> = new vscode.EventEmitter<DocumentItem | undefined | void>();
 	readonly onDidChangeTreeData: vscode.Event<DocumentItem | undefined | void> = this._onDidChangeTreeData.event;
 	private documentTree: File | null = null;
+	private api: DynalistAPI;
 
-	constructor(private context: vscode.ExtensionContext) {
-		this.getApi()
-			.then(api => api.fetchDocuments())
-			.then((tree) => {
-				this.documentTree = tree;
-				this._onDidChangeTreeData.fire();
-			})
+	constructor(context: vscode.ExtensionContext) {
+		this.api = new DynalistAPI(context);
+		this.reload()
 			.catch((e) => {
 				if (e instanceof Error) {
 					vscode.window.showWarningMessage(e.message);
@@ -23,13 +20,8 @@ export default class DynalistDocumentProvider implements vscode.TreeDataProvider
 			});
 	}
 
-	async getApi(): Promise<DynalistAPI> {
-		return new DynalistAPI(this.context);
-	}
-
 	async reload() {
-		const api = await this.getApi();
-		api.fetchDocuments().then(
+		this.api.fetchDocuments().then(
 			(tree) => {
 				this.documentTree = tree;
 				this._onDidChangeTreeData.fire();

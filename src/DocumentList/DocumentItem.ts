@@ -8,8 +8,7 @@ export default class DocumentItem extends vscode.TreeItem {
 			title,
 			type === "document" ? vscode.TreeItemCollapsibleState.None : collapsed ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.Expanded
 		);
-		this.tooltip = `${this.title}`;
-		this.description = this.title;
+		this.tooltip = this.title;
 		this.children = children.map((child: any) => new DocumentItem(child.title, child.id, child.type, child.children || [], child?.collapsed));
 		this.iconPath = type === "document" ? vscode.ThemeIcon.File : vscode.ThemeIcon.Folder;
 		this.command = this.type === 'document' ? {
