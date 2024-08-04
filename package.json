@@ -38,13 +38,13 @@
       {
         "command": "dynalist-plugin.show-document-list",
         "title": "List documents",
-        "icon": "resources/refresh-cw.svg",
+        "icon": "resources/sync.svg",
         "category": "Dynalist"
       },
       {
         "command": "dynalist-plugin.show-content",
         "title": "Show document content",
-        "icon": "resources/refresh-cw.svg"
+        "icon": "resources/sync.svg"
       },
       {
         "command": "dynalist-plugin.node.insert",
