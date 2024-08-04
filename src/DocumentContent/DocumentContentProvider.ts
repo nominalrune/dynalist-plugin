@@ -26,10 +26,9 @@ export default class DocumentContentProvider implements vscode.TreeDataProvider<
 		this.saveChanges();
 		clearInterval(this.interval_id);
 	}
-	private async getApi(): Promise<DynalistAPI> {
+	private getApi(): DynalistAPI {
 		if (this.api) { return this.api; }
-		const token = await getToken(this.context.secrets);
-		this.api = new DynalistAPI(token);
+		this.api = new DynalistAPI(this.context);
 		return this.api;
 	}
 	async load(documentId?: string) {

@@ -17,7 +17,7 @@ Note that this is unofficial plugin.
 1. **Input Your API Token:**
    - Get your API token via [dynalist's developper page](https://dynalist.io/developer).
    - When the plugin is activated, it will prompt you to enter your Dynalist API token if not already saved.
-   - You can also manually run the command `Dynalist: Save API Token` via the Command Palette (`Ctrl+Shift+P`).
+   - You can also manually run the command `Dynalist: Update API Token` via the Command Palette (`Ctrl+Shift+P`).
 
 2. **View Document List:**
    - Run the command `Dynalist: Show Document List` via the Command Palette (`Ctrl+Shift+P`).

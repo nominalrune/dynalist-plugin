@@ -9,7 +9,7 @@ export default class DynalistDocumentProvider implements vscode.TreeDataProvider
 	private documentTree: File | null = null;
 
 	constructor(private context: vscode.ExtensionContext) {
-		this.createApi()
+		this.getApi()
 			.then(api => api.fetchDocuments())
 			.then((tree) => {
 				this.documentTree = tree;
@@ -23,13 +23,12 @@ export default class DynalistDocumentProvider implements vscode.TreeDataProvider
 			});
 	}
 
-	async createApi(): Promise<DynalistAPI> {
-		const token = await getToken(this.context.secrets);
-		return new DynalistAPI(token);
+	async getApi(): Promise<DynalistAPI> {
+		return new DynalistAPI(this.context);
 	}
 
 	async reload() {
-		const api = await this.createApi();
+		const api = await this.getApi();
 		api.fetchDocuments().then(
 			(tree) => {
 				this.documentTree = tree;
