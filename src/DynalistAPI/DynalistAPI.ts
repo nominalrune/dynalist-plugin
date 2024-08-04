@@ -1,23 +1,37 @@
+import * as vscode from 'vscode';
 import Node from './Node';
 import File from './File';
 import { Change } from './Change';
+import getToken from '../Token/getToken';
 
 export default class DynalistAPI {
-	token: string = '';
-	constructor(token: string) {
-		this.token = token;
-	}
-	async fetchDocuments() {
-		const response = await fetch('https://dynalist.io/api/v1/file/list', {
+	token: string | null = null;
+	constructor(private context: vscode.ExtensionContext) { }
+	private async fetch(url: string, body?: object) {
+		if (!this.token) {
+			const token = await getToken(this.context.secrets);
+			if (!token) {
+				const action = await vscode.window.showInformationMessage('API token not set. Please input your dynalist token.', 'Input token');
+				if(action==='Input token'){
+					vscode.commands.executeCommand('dynalist-plugin.update-token');
+				}
+				throw new Error('token not set error.');
+			}
+			this.token = token;
+		}
+		return fetch(url, {
 			method: 'POST',
 			body: JSON.stringify({
 				token: this.token,
+				...body,
 			})
-		}).then((response) => response.json() as Promise<ListResponse>);
+		});
+	}
+	async fetchDocuments() {
+		const response = await this.fetch('https://dynalist.io/api/v1/file/list').then((response) => response.json() as Promise<ListResponse>);
 		if (response._code !== 'Ok') {
 			throw new Error('Failed to fetch documents:' + response._msg);
 		}
-
 		const files = response.files;
 		const rootFileId = response.root_file_id;
 		const fileMap = new Map(files.map(file => [file.id, file]));
@@ -33,17 +47,11 @@ export default class DynalistAPI {
 				children: (node.children || []).map(buildTree).filter(child => !!child)
 			};
 		};
-
-		// Return the tree starting from the root folder
 		return buildTree(rootFileId);
 	}
 	async fetchDocumentContent(fileId: string) {
-		const response = await fetch('https://dynalist.io/api/v1/doc/read', {
-			method: 'POST',
-			body: JSON.stringify({
-				token: this.token,
-				file_id: fileId,
-			})
+		const response = await this.fetch('https://dynalist.io/api/v1/doc/read', {
+			file_id: fileId,
 		}).then((response) => response.json() as Promise<DocResponse>);
 		if (response._code !== 'Ok') {
 			throw new Error('Failed to fetch document content' + response._msg);
@@ -51,13 +59,9 @@ export default class DynalistAPI {
 		return response;
 	}
 	async saveDocumentContetnt(fileId: string, changes: Change[]) {
-		const response = await fetch('https://dynalist.io/api/v1/doc/edit', {
-			method: 'POST',
-			body: JSON.stringify({
-				token: this.token,
-				file_id: fileId,
-				changes: changes,
-			})
+		const response = await this.fetch('https://dynalist.io/api/v1/doc/edit', {
+			file_id: fileId,
+			changes: changes,
 		}).then((response) => response.json() as Promise<EditResponse>);
 		console.log('saveDocumentContetnt response:', response);
 		if (response._code !== 'Ok') {

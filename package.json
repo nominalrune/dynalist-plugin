@@ -2,7 +2,7 @@
   "name": "dynalist-plugin",
   "displayName": "Dynalist plugin",
   "description": "[unofficial] Dynalist vscode extention",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "KeiYokoyama",
   "icon": "resources/icon.png",
   "repository": {
@@ -33,6 +33,12 @@
           "light": "resources/key.svg",
           "dark": "resources/key.svg"
         },
+        "category": "Dynalist"
+      },
+      {
+        "command": "dynalist-plugin.delete-token",
+        "title": "Delete token",
+        "icon": "resources/key.svg",
         "category": "Dynalist"
       },
       {
@@ -73,10 +79,10 @@
     "menus": {
       "commandPalette": [
         {
-          "command": "dynalist-plugin.save-token"
+          "command": "dynalist-plugin.update-token"
         },
         {
-          "command": "dynalist-plugin.update-token"
+          "command": "dynalist-plugin.delete-token"
         },
         {
           "command": "dynalist-plugin.show-document-list"

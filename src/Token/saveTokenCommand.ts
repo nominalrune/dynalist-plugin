@@ -17,6 +17,7 @@ async function store(context: ExtensionContext) {
 		try {
 			await context.secrets.store(TOKEN_KEY, token);
 			window.showInformationMessage('Token saved successfully.');
+			commands.executeCommand('dynalist-plugin.show-document-list');
 		} catch (error) {
 			window.showErrorMessage('Failed to save token.');
 		}
