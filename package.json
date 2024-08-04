@@ -2,7 +2,7 @@
   "name": "dynalist-plugin",
   "displayName": "Dynalist plugin",
   "description": "[unofficial] Dynalist vscode extention",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "KeiYokoyama",
   "icon": "resources/icon.png",
   "repository": {
